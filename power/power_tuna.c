@@ -25,13 +25,9 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
-#define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
-
 struct tuna_power_module {
     struct power_module base;
     pthread_mutex_t lock;
-    int boostpulse_fd;
-    int boostpulse_warned;
 };
 
 static void sysfs_write(char *path, char *s)
@@ -73,28 +69,6 @@ static void tuna_power_init(struct power_module *module)
                 "1");
 }
 
-static int boostpulse_open(struct tuna_power_module *tuna)
-{
-    char buf[80];
-
-    pthread_mutex_lock(&tuna->lock);
-
-    if (tuna->boostpulse_fd < 0) {
-        tuna->boostpulse_fd = open(BOOSTPULSE_PATH, O_WRONLY);
-
-        if (tuna->boostpulse_fd < 0) {
-            if (!tuna->boostpulse_warned) {
-                strerror_r(errno, buf, sizeof(buf));
-                ALOGE("Error opening %s: %s\n", BOOSTPULSE_PATH, buf);
-                tuna->boostpulse_warned = 1;
-            }
-        }
-    }
-
-    pthread_mutex_unlock(&tuna->lock);
-    return tuna->boostpulse_fd;
-}
-
 static void tuna_power_set_interactive(struct power_module *module, int on)
 {
     return;
@@ -103,28 +77,7 @@ static void tuna_power_set_interactive(struct power_module *module, int on)
 static void tuna_power_hint(struct power_module *module, power_hint_t hint,
                             void *data)
 {
-    struct tuna_power_module *tuna = (struct tuna_power_module *) module;
-    char buf[80];
-    int len;
-
-    switch (hint) {
-    case POWER_HINT_INTERACTION:
-        if (boostpulse_open(tuna) >= 0) {
-	    len = write(tuna->boostpulse_fd, "1", 1);
-
-	    if (len < 0) {
-	        strerror_r(errno, buf, sizeof(buf));
-		ALOGE("Error writing to %s: %s\n", BOOSTPULSE_PATH, buf);
-	    }
-	}
-        break;
-
-    case POWER_HINT_VSYNC:
-        break;
-
-    default:
-        break;
-    }
+    return;
 }
 
 static struct hw_module_methods_t power_module_methods = {
@@ -149,6 +102,4 @@ struct tuna_power_module HAL_MODULE_INFO_SYM = {
     },
 
     lock: PTHREAD_MUTEX_INITIALIZER,
-    boostpulse_fd: -1,
-    boostpulse_warned: 0,
 };
