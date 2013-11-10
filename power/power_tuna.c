@@ -60,15 +60,17 @@ static void tuna_power_init(struct power_module *module)
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
                 "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
-                "60000");
+                "45000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq",
-                "700000");
+                "729600");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/target_loads",
-                "70 920000:80 1200000:99");
+                "85");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
-                "99");
+                "95");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay",
                 "80000");
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy",
+                "1");
 }
 
 static int boostpulse_open(struct tuna_power_module *tuna)
@@ -95,13 +97,7 @@ static int boostpulse_open(struct tuna_power_module *tuna)
 
 static void tuna_power_set_interactive(struct power_module *module, int on)
 {
-    /*
-     * Lower maximum frequency when screen is off.  CPU 0 and 1 share a
-     * cpufreq policy.
-     */
-
-    sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
-                on ? "1200000" : "700000");
+    return;
 }
 
 static void tuna_power_hint(struct power_module *module, power_hint_t hint,
