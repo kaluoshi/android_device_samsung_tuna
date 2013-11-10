@@ -60,15 +60,15 @@ static void tuna_power_init(struct power_module *module)
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
                 "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
-                "45000");
+                "25000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq",
                 "729600");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/target_loads",
                 "85");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
-                "95");
+                "85");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay",
-                "80000");
+                "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy",
                 "1");
 }
