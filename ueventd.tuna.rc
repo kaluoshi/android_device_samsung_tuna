@@ -47,3 +47,6 @@
 
 #for cp log
 /dev/cdma_cplog		0660	radio	radio
+
+#for PVR
+/dev/pvrsrvkm           0666    system   graphics
